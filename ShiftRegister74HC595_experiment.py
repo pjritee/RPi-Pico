@@ -3,6 +3,8 @@
 # The loop has been simplified and then complicated again to
 # add a pot and a button
 
+# See https://youtu.be/eDOK4IY3GXE
+
 # IC (shift register) pins
 # pin 1,13 - ground
 # pin 10,16 - 3.3v
