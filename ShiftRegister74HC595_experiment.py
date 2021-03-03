@@ -28,8 +28,7 @@ latch_pin.direction = digitalio.Direction.OUTPUT
 
 potentiometer = analogio.AnalogIn(board.GP26)
    
-spi = busio.SPI(clock=board.GP2, MOSI=board.GP3,
-                MISO=board.GP4)
+spi = busio.SPI(clock=board.GP2, MOSI=board.GP3)
 
 spi.try_lock()
 spi.configure(baudrate=5000000, phase=0, polarity=0)
