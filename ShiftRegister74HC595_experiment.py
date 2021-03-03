@@ -1,4 +1,8 @@
-#
+# This is based on https://learn.adafruit.com/74hc595/usage 
+# The code is modified in order to work on the Pico
+# The loop has been simplified and then complicated again to
+# add a pot and a button
+
 # IC (shift register) pins
 # pin 1,13 - ground
 # pin 10,16 - 3.3v
