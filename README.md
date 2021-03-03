@@ -1,2 +1,2 @@
 # RPi-Pico
-Experimenting with the Pico
+Experimenting with the Raspberry Pi Pico
