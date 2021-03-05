@@ -1,12 +1,15 @@
 #
-# IC (shift register) pins
-# pin 1,13 - ground
-# pin 10,16 - 3.3v
-# pin 2,3,4,5,6,7,8,15 LED
-# pin 11 - pico pin GP2
-# pin 12 - pico pin GP6
-# pin 14 - pico pin GP3
-
+# This is a variation on ShiftRegister74HC595_experiment.py
+# The first change is, when you press the button, you don't have to wait for a complete
+# cycle for the number of lights to change.
+# The more important change is the use of gpio.
+# My understanding from looking at what happens is that whenever you do, for example,
+# pins[index].value = True
+# then there will be a communication via spi with a number representing which bits will be set
+# (posssibly only if this flipped the value).
+# This means each time around the loop there will be num_lights+1 communications.
+# This version does, I believe, only one communication each time around the loop by
+# putting the number representing the required bit pattern in gpio
 import board
 import digitalio
 import adafruit_74hc595
@@ -42,9 +45,12 @@ while True:
         if not button.value and button_pressed:
             button_pressed = False
     
+        # initialise the bit pattern to all zeros 
         pins = 0
         for offset in range(num_lights):
+            # set the required bit to 1
             pins |= 1 << ((index+offset) % 8)
+        # send off that bit pattern
         sr.gpio = pins
         
         delay = potentiometer.value/200000
