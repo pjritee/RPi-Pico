@@ -7,6 +7,7 @@ import serial_am2320
 import time
 
 # create an object
+# You need to replace the port below by the one you are using to communicate with the Pico
 weather = serial_am2320.SerialAm2320('/dev/ttyACM0')
 
 
