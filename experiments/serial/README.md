@@ -1,4 +1,4 @@
-# Experiments with Serial Communication
+# Serial Communication Experiments
 
 ## Serial Communication over the USB connection to access a temperature/humidity sensor
 The files are:
