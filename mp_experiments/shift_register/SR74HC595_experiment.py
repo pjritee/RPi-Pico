@@ -8,9 +8,7 @@ button = machine.Pin(13, machine.Pin.IN, machine.Pin.PULL_DOWN)
 
 latch_pin =  machine.Pin(6, machine.Pin.OUT)
 
-#potentiometer = analogio.AnalogIn(board.GP26)
-   
-#spi = busio.SPI(clock=board.GP2, MOSI=board.GP3)
+potentiometer = machine.ADC(machine.Pin(26))
 
 spi = machine.SPI(0, baudrate=5000000, polarity=0, phase=0,
                   sck=machine.Pin(2), mosi=machine.Pin(3),
@@ -34,7 +32,7 @@ def main():
             sr.on_pins = (index+offset \
                           for offset in range(num_lights))
         
-            delay = 1 #potentiometer.value/200000
+            delay = potentiometer.read_u16()/200000
             time.sleep(delay)
  
 

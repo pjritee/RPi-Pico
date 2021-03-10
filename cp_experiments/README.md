@@ -1,4 +1,4 @@
-# Raspberry Pi Pico Experiments
+# Raspberry Pi Pico Experiments in CircuitPython
 
 This directory contains a collection of experiments using the Pico.
 
