@@ -1,6 +1,6 @@
 # Raspberry Pi Pico Experiments in Micropython
 
-This directory contains a collection of experiments using the Pico.
+This directory contains a collection of experiments using micropython on the Pico.
 
 Experiments:
 
