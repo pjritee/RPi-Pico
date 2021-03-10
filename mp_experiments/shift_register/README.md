@@ -1,7 +1,7 @@
-# Shift Register Experiments
+# Shift Register Experiment
 
-- `ShiftRegister74HC595_experiment1.py` : using the pins of `adafruit_74hc595.ShiftRegister74HC595` to turn LEDs on and off
+- `sr74HC595.py` : class similar to `adafruit_74hc595.ShiftRegister74HC595` 
 
-- `ShiftRegister74HC595_experiment2.py` : using gpio and bit fiddling of `adafruit_74hc595.ShiftRegister74HC595` to turn LEDs on and off
+- `SR74HC595_experiment.py` : similar to the circuitpython `ShiftRegister74HC595_experiment3.py` experiment using the above class rather than `adafruit_74hc595.ShiftRegister74HC595`
 
-- `ShiftRegister74HC595_experiment3.py` : subclassing `adafruit_74hc595.ShiftRegister74HC595` to hide the bit shifting and provide a more straightforward interface.
+To run copy `sr74HC595.py` to the Pico and save `SR74HC595_experiment.py` as `main.py` on the Pico.
