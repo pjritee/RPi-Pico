@@ -17,13 +17,12 @@ class DebouncedButton(machine.Pin):
     # number of retries of the buttons value to determine if the value is stable
     RETRIES = 40
     
-    def __init__(self, pinnum, pinupdown, irq, callback):
+    def __init__(self, pinnum, irq, callback):
         # pinnum is the pin number for the button
-        # pinupdown is either machine.Pin.PULL_DOWN or machine.Pin.PULL_UP
         # irq is either machine.Pin.IRQ_FALLING  or machine.Pin.IRQ_RISING
         # callback is the user defined callback in response to a debounced button event
         # it has one argument that will be the DebouncedButton (pin) object
-        super().__init__(pinnum, machine.Pin.IN, pinupdown)
+        super().__init__(pinnum, machine.Pin.IN, machine.Pin.PULL_DOWN)
         # setup an IRQ triggered callback for the button
         self.irq(trigger=irq, handler=self.handler)
         self.callback = callback
@@ -52,7 +51,7 @@ def callback(pin):
     global num_lights
     num_lights = num_lights % 7 + 1
     
-button = DebouncedButton(13, machine.Pin.PULL_DOWN, machine.Pin.IRQ_RISING, callback)
+button = DebouncedButton(13, machine.Pin.IRQ_RISING, callback)
 
 latch_pin =  machine.Pin(6, machine.Pin.OUT)
 
