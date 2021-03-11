@@ -3,7 +3,7 @@
 # except that, instead of inheriting from the SR74HC595 class I define a class
 # similar to SR74HC59 defined in sr74HC595.py but only uses on_pins to set the pins that are on.
 
-# The other difference is that I have defined a DebouncedLightsButton class that
+# The other difference is that I have defined a DebouncedButton class that
 # uses an IRQ callback on the button with debouncing
 
 
@@ -11,18 +11,22 @@ import machine
 import time
 import sr74HC595
 
-# This class keeps track of the number of lights that should be on using an IRQ callback
-# and debouncing
-class DebouncedLightsButton(machine.Pin):
+# This class defines a debounced button using an IRQ callback
+class DebouncedButton(machine.Pin):
 
     # number of retries of the buttons value to determine if the value is stable
     RETRIES = 40
     
-    def __init__(self, pinnum, pinupdown, irq):
+    def __init__(self, pinnum, pinupdown, irq, callback):
+        # pinnum is the pin number for the button
+        # pinupdown is either machine.Pin.PULL_DOWN or machine.Pin.PULL_UP
+        # irq is either machine.Pin.IRQ_FALLING  or machine.Pin.IRQ_RISING
+        # callback is the user defined callback in response to a debounced button event
+        # it has one argument that will be the DebouncedButton (pin) object
         super().__init__(pinnum, machine.Pin.IN, pinupdown)
         # setup an IRQ triggered callback for the button
-        self.irq(trigger=irq, handler=self.callback)
-        self._num_lights = 1
+        self.irq(trigger=irq, handler=self.handler)
+        self.callback = callback
         self.required_value = 0 if irq == machine.Pin.IRQ_FALLING else 1
 
     def debounce(self):
@@ -37,16 +41,18 @@ class DebouncedLightsButton(machine.Pin):
             curr = next_
         return True
     
-    def callback(self, _):
+    def handler(self, pin):
         # callback for button
         if self.debounce():
-            self._num_lights = self._num_lights % 7 + 1
+            self.callback(pin)
     
-    @property
-    def num_lights(self):
-        return self._num_lights
     
-button = DebouncedLightsButton(13, machine.Pin.PULL_DOWN, machine.Pin.IRQ_RISING)
+num_lights = 1
+def callback(pin):
+    global num_lights
+    num_lights = num_lights % 7 + 1
+    
+button = DebouncedButton(13, machine.Pin.PULL_DOWN, machine.Pin.IRQ_RISING, callback)
 
 latch_pin =  machine.Pin(6, machine.Pin.OUT)
 
@@ -63,7 +69,7 @@ def main():
     while True:
         for index in range(8):
             sr.on_pins = (index+offset \
-                          for offset in range(button.num_lights))
+                          for offset in range(num_lights))
         
             delay = potentiometer.read_u16()/200000
             time.sleep(delay)
