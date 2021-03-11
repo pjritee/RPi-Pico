@@ -30,7 +30,7 @@ class DebouncedButton(machine.Pin):
         self.required_value = 0 if irq == machine.Pin.IRQ_FALLING else 1
 
     def debounce(self):
-        # return True iff the button is stable at 1 over RETRIES checks
+        # return True iff the button is stable at  self.required_value over RETRIES checks
         curr = self.value()
         if curr != self.required_value:
             return False
