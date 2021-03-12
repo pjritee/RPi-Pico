@@ -6,4 +6,4 @@ Experiments:
 
 - serial : using serial communication
 - shift_register : using the 74HC595 shift register
-
+- rtc : using the DS3231 Real Time Clock
