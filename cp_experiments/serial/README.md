@@ -20,6 +20,8 @@ I bought an ADA3309 (Adafruit CP2104 Friend)  to play with serial communication 
 
 It appears that CircuitPython uses UART1 for the REPL and UART0 for serial communication which looks like its the reverse of MicroPython.
 
+For this experiment I had the option of the Pico sending data at regular intervals or having the other side ask the Pico for data at regular intervals. I picked the first because if I replace serial communication with communication using a WiFi breakout board then I could use a publish/subscribe system like MQTT and that makes the sensor an IoT sensor.
+
 uart_experiment1.py : using UART serial communication to transmit temperature and humidity from an am2320 sensor.
 
 weatherApp.py : just for fun - a very simply tkinter app for receiving the serial data and displaying the information.
