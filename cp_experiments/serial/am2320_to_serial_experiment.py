@@ -19,7 +19,7 @@ i2c = busio.I2C(board.GP9, board.GP8)
 # the sensor is an AM2315 (the am2320 lib works)
 sensor = adafruit_am2320.AM2320(i2c)
 
-while True:
+while False:
     cmd = input().strip()
     if cmd == ';;get_temp;;':
         print('data({{"temperature":{0}, "relative_humidity":{1}}})'.\
