@@ -21,4 +21,5 @@ I bought an ADA3309 (Adafruit CP2104 Friend)  to play with serial communication 
 It appears that CircuitPython uses UART1 for the REPL and UART0 for serial communication which looks like its the reverse of MicroPython.
 
 uart_experiment1.py : using UART serial communication to transmit temperature and humidity from an am2320 sensor.
+
 weatherApp.py : just for fun - a very simply tkinter app for receiving the serial data and displaying the information.
