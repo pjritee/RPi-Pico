@@ -8,6 +8,14 @@
 # cp210x converter now attached to ttyUSB0
 # near the bottom of the output
 
+
+# !!! WARNING !!!
+# When I run this on my Linux box and I unplug the USB for the serial connection
+# my box completely freezes and I need to do a hard reboot.
+# I am guessing that it's because the program is blocked on a readline
+# but completely freezing seems a bit extreme.
+# No idea how to fix this.
+
 import serial
 import queue as Queue
 import tkinter as tk
@@ -31,8 +39,9 @@ class SerialReader(threading.Thread):
                 msg = self.conn.readline().decode()
                 message_queue.put(msg)
                 self.app.master.event_generate("<<data>>")
-            except Exception(e):
-                print(str(e))
+            except Exception as e:
+                print("Serial Reader Exception:", str(e))
+                self.conn.close()
                 break
 
     def stop(self):
@@ -66,8 +75,8 @@ class WeatherApp(object):
             data_dict = json.loads(data)
             self.temperature_label.config(text = f'Temperature: {data_dict["temperature"]}C')
             self.humidity_label.config(text = f'Relative Humidity: {data_dict["relative_humidity"]}%')
-        except Exception(e):
-            print(str(e))
+        except Exception as e:
+            print("data_message Exception:", str(e))
         
 
 if __name__ == "__main__":
