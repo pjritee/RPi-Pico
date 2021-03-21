@@ -15,6 +15,9 @@
 # I am guessing that it's because the program is blocked on a readline
 # but completely freezing seems a bit extreme.
 # No idea how to fix this.
+# Update: if I run a terminal version of this program on my headless RPi
+# and I pull out the USB it gracefully terminates.
+
 
 import serial
 import queue as Queue
