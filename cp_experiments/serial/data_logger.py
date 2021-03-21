@@ -37,6 +37,8 @@ sampling_led = digitalio.DigitalInOut(board.GP20)
 upload_led.direction = digitalio.Direction.OUTPUT
 sampling_led.direction = digitalio.Direction.OUTPUT
 
+# The times chosen here are probably way shorted than in a real application
+# This is for testing purposes.
 DATAFILE = '/data.txt' # file to store data on Pico
 SAMPLE_INTERVAL = 10 #secs - how often sample to be taken
 SLEEP_TIME = 2 #secs - how long to sleep before testing if an upload is requested
@@ -82,11 +84,7 @@ delay_upload = False
 while True:
     sampling_led.value = True
     time.sleep(SLEEP_TIME)
-    if delay_upload:
-        # a sample was just taken and a download was requested
-        upload()
-        delay_upload = False
-    elif uart.in_waiting:
+    if uart.in_waiting:
         # something waiting to be read
         cmd = uart.readline().decode().strip()
         if cmd == 'get':
@@ -108,3 +106,7 @@ while True:
         # the next sampling time
         next_sample += SAMPLE_INTERVAL
         sampling_led.value = True
+        if delay_upload:
+            # a sample was just taken and a download was requested
+            upload()
+            delay_upload = False
