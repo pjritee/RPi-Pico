@@ -21,12 +21,23 @@ import adafruit_ds3231
 uart = busio.UART(board.GP12, board.GP13, baudrate=115200,timeout=2)
 
 # I decided to use 2 I2C's - one for the sensor and one for the RTC.
-# 
+#
+# I have confirmed that the program will work using a shared I2C
+# For example:
+# comment out sensor_i2c = busio.I2C(board.GP9, board.GP8)
+# change
+# sensor = adafruit_am2320.AM2320(sensor_i2c)
+# to
+# sensor = adafruit_am2320.AM2320(rtc_i2c)
+# move the wire connected to GP9 to share with GP15
+# move the wire connected to GP8 to share with GP14
+
 sensor_i2c = busio.I2C(board.GP9, board.GP8)
+rtc_i2c = busio.I2C(board.GP15, board.GP14)
+
 # the sensor is an AM2315
 sensor = adafruit_am2320.AM2320(sensor_i2c)
 
-rtc_i2c = busio.I2C(board.GP15, board.GP14)
 # create a DS3231 object
 ds3231 = adafruit_ds3231.DS3231(rtc_i2c)
 
