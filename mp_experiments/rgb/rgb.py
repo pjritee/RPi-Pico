@@ -3,6 +3,9 @@
 # because it is a common anode then the brightness is "inverted"
 # so duty_u16(0) is maximum brightness and
 # duty_u16(2**16-1) is off
+# see, for example, http://www.pibits.net/code/raspberry-pi-pico-and-rgb-led-example-in-micropython.php
+# The longest pin on the common anode RGB is connected to 3V
+
 from machine import Pin,PWM
 
 red = PWM(Pin(19, Pin.OUT))
