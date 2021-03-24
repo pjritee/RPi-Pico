@@ -42,7 +42,7 @@ while True:
     # ? I wondered if we couldn't construct 3 machines before the loop
     # ? and then start and stop each in turn.
     # ? the problem is when I tried I got a
-    # ?    ValueError: GP20 in use
+    # ?    ValueError: GP19 in use
     # ? when I tried to construct the second machine
     sm = rp2pio.StateMachine(
         led_quarter_brightness, frequency=10000, first_set_pin=board.GP19, set_pin_count = 2
