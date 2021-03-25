@@ -2,6 +2,8 @@
 # to cycle through 8 LEDs in the same way as the shift_register experiments but is way simpler -
 # we simply write 8 bits to the state machine (representing the state of the 8 LEDs)
 # and in the state machine pull the input and use the first 8 bits to set the pins
+# This is actually a silly experiment - see README
+
 import time
 import board
 import digitalio
