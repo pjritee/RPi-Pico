@@ -17,7 +17,9 @@ import adafruit_pioasm
 blink = adafruit_pioasm.assemble(
     """
 .program blink
-    ; ? I don't understand what the block is for it seems that pull by itself is enough
+    ; ? I don't understand what the block is for it seems that pull by itself is enough.
+    ; ? OK - the choices seem to be block and nonblock (as opposed to a block of memory - silly me)
+    ; ? so the default must be to block
     pull block    ; These two instructions take the blink duration
     ; all 32 bits pulled into the OSR are transfered into register y
     out y, 32     ; and store it in y
