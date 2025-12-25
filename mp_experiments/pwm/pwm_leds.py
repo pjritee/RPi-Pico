@@ -114,12 +114,6 @@ def off_generator(length):
         yield 0
         
            
-
-
-    
-def apply_next(control_generator, led):
-    d = next(control_generator)
-    led.duty_u16(d)
     
 """ LED control class
     Each instance controls one LED according to a sequence of generator functions.
@@ -232,7 +226,7 @@ for led in leds:
 while True:
     time.sleep_ms(5)
     # Each step takes about 5ms and so, for example, a sin wave of length 400 will have a period of about 2 seconds.
-    
+
     # Step each control generator
     for c in control_generators:
         c.step()
