@@ -115,108 +115,79 @@ def off_generator(length):
         
            
     
-""" LED control class
-    Each instance controls one LED according to a sequence of generator functions.
+# Returns a function that when called returns a generator that repeatedly yields from
+# the supplied generator forever
+def repeat_generator_always(generator, *args):
+    def repeat_generator():
+        while True:
+            yield from generator(*args)
+    return repeat_generator
 
-    Each generator function is specified along with its arguments and a repeat count.
-    Each time a generator is chosen (including as a repeat) the generator function is called with the supplied arguments 
-    to create a new generator instance.
+# Returns a function that when called returns a generator that repeatedly yields from
+# the supplied generator for the supplied number of times
+def repeat_generator_for(number, generator, *args):
+    def repeat_generator():
+        for _ in range(number):
+            yield from generator(*args)
+    return repeat_generator
 
-    The repeat count can be:
-     > 0 : repeat this many times
-     = 0 : repeat forever (no other generators in the sequence will be used once this one is reached/chosen)
-     < 0 : -repeat is the percentage chance of repeating (e.g. -20 means 20% chance of repeating)
+# Returns a function that when called returns a generator that repeatedly yields from
+# the supplied generator with each repeat carried out with the supplied probability 
+def repeat_generator_random(probability, generator, *args):
+    def repeat_generator():
+        while random.randint(0,100) < probability:
+            yield from generator(*args)
+    return repeat_generator
 
-    delay: if > 0, the LED is kept off for this many steps before starting the generator sequence.
+# A generator that yields the required delay followed by repeatedly making a random choice from
+# generator_list and yielding from that generator produced from that choice.
+def sequence_choice_generator(generator_list, delay=0):
+    if delay > 0:
+        yield from off_generator(delay)
+    while True:
+        yield from random.choice(generator_list)()
 
-    choose: if choose is True, then each time a new generator is needed, one is chosen randomly from the sequence.
+# A generator that yields the required delay followed by repeatedly iterating through
+# generator_list and yielding from that generator produced from that entry.
+def sequence_iterate_generator(generator_list, delay=0):
+    if delay > 0:
+        yield from off_generator(delay)
+    while True:
+        for generator in generator_list:
+            yield from generator()
+        
+""" 
+    LED control class
+    Each instance controls one LED using the supplied (infinite) generator. The generator
+    yields integers from 0 to 65535
  """
-
 class LedControl:
-    def __init__(self, led, generator_sequence, delay = 0, choose=False):
+    def __init__(self, led, generator):
         self.led = led
-        self.generator_sequence = generator_sequence
-        self.len = len(generator_sequence)
-        self.index = 0
-        self.choose = choose
-        self.another_repeat = False
-        if choose:
-            self.generator_function, self.args, self.repeat = random.choice(self.generator_sequence)
-        else:
-            self.generator_function, self.args, self.repeat = generator_sequence[0]
-        if delay == 0:
-            self.set_control_generator()
-        else:
-            self.control_generator = off_generator(delay)
-     
-    # Initialize the control generator according to current index or randomly (if choose is True)
-    def set_control_generator(self):
-        # reset another_repeat flag. This will only be set to False again if repeat > 0 and runs out
-        self.another_repeat = True
-        if self.choose:
-            self.generator_function, self.args, self.repeat = random.choice(self.generator_sequence)
-            self.control_generator = self.generator_function(*self.args)
-            return
-        
-        # sequential choice
-        if self.index == self.len:
-            # back to the beginning of generator_sequence
-            self.index = 0
-        self.generator_function, self.args, self.repeat = self.generator_sequence[self.index]
-        self.control_generator = self.generator_function(*self.args)
-        # move to next index for next time
-        self.index += 1            
-        
+        self.generator = generator
+    
+    # Perform one step of the control by getting the next value from the generator and setting the LED duty cycle
     def step(self):
-        try:
-            # Get next value from current control generator and apply to LED
-            self.led.duty_u16(next(self.control_generator)) 
-        except StopIteration:
-            # Current control generator is exhausted
+        self.led.duty_u16(next(self.generator)) 
 
-            if (self.repeat < 0) and (random.randint(0,100) <= -self.repeat):
-                # repeat
-                self.control_generator = self.generator_function(*self.args)
-                self.led.duty_u16(next(self.control_generator))
-                return
-            if self.repeat > 0:
-                # repeat again
-                self.repeat -= 1
-                if self.repeat == 0:
-                    # no more repeats
-                    self.another_repeat = False
-                self.control_generator = self.generator_function(*self.args)
-                self.led.duty_u16(next(self.control_generator))
-                return
-            
-            if self.repeat == 0 and self.another_repeat:
-                # repeat again
-                self.control_generator = self.generator_function(*self.args)
-                self.led.duty_u16(next(self.control_generator))
-                return
-             
-            # move on to next in generator_sequence
-            self.set_control_generator()
-            self.led.duty_u16(next(self.control_generator))
-            
-                
+        
 # Example generator sequences for each LED
 generators = [
     # A random square wave whose length is between 100 and 200 steps, with a 20% chance of repeating
-    (pwm_rand_square_generator, [100, 200], -20),
+    repeat_generator_random(20, pwm_rand_square_generator, 100, 200),
     # A sine wave  whose length is between 200 and 600 steps, with a 70% chance of repeating
-    (pwm_rand_sin_generator, [200, 600], -70),
+    repeat_generator_random(70, pwm_rand_sin_generator, 200, 600),
     # An on generator for 100 steps with a 25% chance of repeating
-    (on_generator, [100], -25)
+    repeat_generator_random(25, on_generator, 100)
     ]
 
 # Create a LedControl instance for each LED with a random delay between 20 and 200 steps 
 # to stagger the starting times and where each time a new generator is needed, one is chosen randomly from the generators list
-control_generators = [LedControl(led, generators, delay=random.randint(20,200), choose=True) for led in leds]
+control_generators = [LedControl(led, sequence_choice_generator(generators, delay=random.randint(20,200))) for led in leds]
        
 # As an alternative example the following setup will have each lead pulsing in the same sin wave pattern but with an increasing
 # offset. The first LED starts immediately, the second after 20 steps, the third after 40 steps etc.
-# control_generators = [LedControl(led, [(pwm_sin_generator, [300], 0)], delay=i*20) for i, led in enumerate(leds)]
+# control_generators = [LedControl(led, sequence_choice_generator([repeat_generator_always(pwm_sin_generator, 300)], delay=i*20)) for i, led in enumerate(leds)]
 
 # Initialize all LEDs to off
 for led in leds:
