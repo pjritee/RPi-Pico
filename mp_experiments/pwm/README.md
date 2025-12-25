@@ -9,5 +9,5 @@ The choices of pins to get 16 independent PWM channels was determined follwing
 
  The wiring is straightforward with the positive side of each LED connected to a pin and the negative side connected to a 200K resistor which in turn is connected to ground.
 
- I 3D printed some covers using clear filament as an amusement and found that they produced suprisingly pleasent effects. I think this was partly due to way the light interacted with the 3D print layers. See youtube for an example run of the system. THe Youtube video doesn't really do it justice.
+ I 3D printed some covers using clear filament as an amusement and found that they produced suprisingly pleasent effects. I think this was partly due to way the light interacted with the 3D print layers. See youtube https://youtube.com/shorts/wqvX2MKz4js for an example run of the system. THe Youtube video doesn't really do it justice.
 
