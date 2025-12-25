@@ -174,13 +174,11 @@ class LedControl:
         except StopIteration:
             # Current control generator is exhausted
 
-            if self.repeat < 0:
-                # -self.repeat is the percentage of repeating
-                if (random.randint(0,99) < -self.repeat and random.randint(0,100) <= -self.repeat):
-                    # repeat
-                    self.control_generator = self.generator_function(*self.args)
-                    self.led.duty_u16(next(self.control_generator))
-                    return
+            if (self.repeat < 0) and (random.randint(0,100) <= -self.repeat):
+                # repeat
+                self.control_generator = self.generator_function(*self.args)
+                self.led.duty_u16(next(self.control_generator))
+                return
             if self.repeat > 0:
                 # repeat again
                 self.repeat -= 1
@@ -190,7 +188,8 @@ class LedControl:
                 self.control_generator = self.generator_function(*self.args)
                 self.led.duty_u16(next(self.control_generator))
                 return
-            if self.another_repeat:
+            
+            if self.repeat == 0 and self.another_repeat:
                 # repeat again
                 self.control_generator = self.generator_function(*self.args)
                 self.led.duty_u16(next(self.control_generator))
