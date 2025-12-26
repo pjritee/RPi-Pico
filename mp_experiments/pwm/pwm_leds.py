@@ -156,20 +156,6 @@ def sequence_iterate_generator(generator_list, delay=0):
         for generator in generator_list:
             yield from generator()
         
-""" 
-    LED control class
-    Each instance controls one LED using the supplied (infinite) generator. The generator
-    yields integers from 0 to 65535
- """
-class LedControl:
-    def __init__(self, led, generator):
-        self.led = led
-        self.generator = generator
-    
-    # Perform one step of the control by getting the next value from the generator and setting the LED duty cycle
-    def step(self):
-        self.led.duty_u16(next(self.generator)) 
-
         
 # Example generator sequences for each LED
 generators = [
@@ -181,13 +167,13 @@ generators = [
     repeat_generator_random(25, on_generator, 100)
     ]
 
-# Create a LedControl instance for each LED with a random delay between 20 and 200 steps 
-# to stagger the starting times and where each time a new generator is needed, one is chosen randomly from the generators list
-control_generators = [LedControl(led, sequence_choice_generator(generators, delay=random.randint(20,200))) for led in leds]
+# Create a list of pairs each consisting of a led and a generator to be used for that led with each generator being a choice generator using 
+# a random delay between 20 and 200 steps to stagger the starting times
+led_controls = [(led, sequence_choice_generator(generators, delay=random.randint(20,200))) for led in leds]
        
 # As an alternative example the following setup will have each lead pulsing in the same sin wave pattern but with an increasing
 # offset. The first LED starts immediately, the second after 20 steps, the third after 40 steps etc.
-# control_generators = [LedControl(led, sequence_choice_generator([repeat_generator_always(pwm_sin_generator, 300)], delay=i*20)) for i, led in enumerate(leds)]
+# led_controls = [(led, sequence_choice_generator([repeat_generator_always(pwm_sin_generator, 400)], delay=i*20)) for i, led in enumerate(leds)]
 
 # Initialize all LEDs to off
 for led in leds:
@@ -195,9 +181,9 @@ for led in leds:
     
 while True:
     time.sleep_ms(5)
-    # Each step takes about 5ms and so, for example, a sin wave of length 400 will have a period of about 2 seconds.
+    # Each step takes about 5ms and so, for example, a sine wave of length 400 will have a period of about 2 seconds.
 
-    # Step each control generator
-    for c in control_generators:
-        c.step()
+    # update each LED's duty cycle from its generator
+    for led, gen in led_controls:
+        led.duty_u16(next(gen))
     
