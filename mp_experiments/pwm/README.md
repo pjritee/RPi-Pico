@@ -1,5 +1,8 @@
 # Using 16 PWM channels on a Raspberry Pi Pico to independently drive LEDs
 
+__Note__: An improved and more flexible version of this program that provides support for more
+complex behaviours can be found in the `generator_builder` repository.
+
 The aim of this experiment is to control 16 LEDs independently using appropriate PWM channels (pins).
 
 The choices of pins to get 16 independent PWM channels was determined follwing 
